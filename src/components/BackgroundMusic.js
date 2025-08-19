@@ -17,6 +17,8 @@ const BackgroundMusic = () => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [autoplayAttempted, setAutoplayAttempted] = useState(false);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   
   const playerRef = useRef(null);
   const initializationRef = useRef(false);
@@ -30,6 +32,12 @@ const BackgroundMusic = () => {
       title: 'FALL IN LOVE W/NOT',
       artist: 'NOT',
       thumbnail: 'https://img.youtube.com/vi/ThEftPScNwA/maxresdefault.jpg'
+    },
+    {
+      id: 'Am-lOD0AvVE',
+      title: 'Plum Condo',
+      artist: 'BABYBIGBOY',
+      thumbnail: 'https://img.youtube.com/vi/Am-lOD0AvVE/maxresdefault.jpg'
     },
     {
       id: 'dQw4w9WgXcQ',
@@ -136,7 +144,9 @@ const BackgroundMusic = () => {
                   setAutoplayAttempted(true);
                   setTimeout(() => {
                     try {
+                      event.target.seekTo(14);
                       event.target.playVideo();
+                      setHasStarted(true);
                       console.log('Autoplay attempted');
                     } catch (err) {
                       console.log('Autoplay failed, user interaction required');
@@ -155,15 +165,17 @@ const BackgroundMusic = () => {
                 const playerState = window.YT.PlayerState;
                 
                 if (state === playerState.ENDED) {
-                  // Loop back to 14 seconds
+                  // Loop back to 14 seconds only when song actually ends
                   event.target.seekTo(14);
                   event.target.playVideo();
+                  setHasStarted(false); // Reset for next loop
                 } else if (state === playerState.PLAYING) {
                   setIsPlaying(true);
                   setError(null); // Clear any autoplay errors when playing starts
                   console.log('Playing...');
                 } else if (state === playerState.PAUSED) {
                   setIsPlaying(false);
+                  console.log('Paused at:', event.target.getCurrentTime());
                 } else if (state === playerState.BUFFERING) {
                   console.log('Player is buffering...');
                 } else if (state === playerState.CUED) {
@@ -213,12 +225,23 @@ const BackgroundMusic = () => {
   useEffect(() => {
     if (player && isReady && typeof player.setVolume === 'function') {
       try {
-        player.setVolume(volume * 100);
+        if (isMuted) {
+          player.setVolume(0);
+        } else {
+          player.setVolume(volume * 100);
+        }
       } catch (err) {
         console.error('Error setting volume:', err);
       }
     }
-  }, [volume, player, isReady]);
+  }, [volume, player, isReady, isMuted]);
+
+  // Reset hasStarted when player changes
+  useEffect(() => {
+    if (player) {
+      setHasStarted(false);
+    }
+  }, [player]);
 
   const togglePlay = () => {
     if (!player || !isReady) {
@@ -228,10 +251,14 @@ const BackgroundMusic = () => {
 
     try {
       if (isPlaying) {
+        // Pause the video at current position
         player.pauseVideo();
       } else {
-        // Start from 14 seconds
-        player.seekTo(14);
+        // Resume from current position, only seek to 14 if it's the first time
+        if (!hasStarted) {
+          player.seekTo(14);
+          setHasStarted(true);
+        }
         player.playVideo();
       }
     } catch (error) {
@@ -243,6 +270,10 @@ const BackgroundMusic = () => {
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
+    // If volume is set to 0, unmute
+    if (newVolume > 0 && isMuted) {
+      setIsMuted(false);
+    }
   };
 
   const clearError = () => {
@@ -259,6 +290,24 @@ const BackgroundMusic = () => {
 
   const togglePlaylist = () => {
     setShowPlaylist(!showPlaylist);
+  };
+
+  const toggleMute = () => {
+    if (!player || !isReady) return;
+    
+    try {
+      if (isMuted) {
+        // Unmute
+        setIsMuted(false);
+        player.setVolume(volume * 100);
+      } else {
+        // Mute
+        setIsMuted(true);
+        player.setVolume(0);
+      }
+    } catch (err) {
+      console.error('Error toggling mute:', err);
+    }
   };
 
   const toggleAutoplay = () => {
@@ -317,6 +366,8 @@ const BackgroundMusic = () => {
     
     setCurrentSongIndex(index);
     setThumbnail(playlist[index].thumbnail);
+    setHasStarted(false); // Reset hasStarted for new song
+    setCurrentTime(0); // Reset current time for new song
     
     if (player && isReady) {
       player.loadVideoById(playlist[index].id);
@@ -359,14 +410,24 @@ const BackgroundMusic = () => {
           </div>
           <div className="header-controls">
             <button 
+              className={`control-btn mute-btn ${isMuted ? 'active' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleMute();
+              }}
+              title={isMuted ? "เปิดเสียง" : "ปิดเสียง"}
+            >
+              {isMuted ? '🔇' : '🔊'}
+            </button>
+            <button 
               className={`control-btn autoplay-btn ${autoplayEnabled ? 'active' : ''}`}
               onClick={(e) => {
                 e.stopPropagation();
                 toggleAutoplay();
               }}
-              title={autoplayEnabled ? "Disable Autoplay" : "Enable Autoplay"}
+              title={autoplayEnabled ? "ปิด Autoplay" : "เปิด Autoplay"}
             >
-              {autoplayEnabled ? '🔊' : '🔇'}
+              {autoplayEnabled ? '▶️' : '⏸️'}
             </button>
             <button 
               className="control-btn playlist-btn"
@@ -384,7 +445,7 @@ const BackgroundMusic = () => {
                 e.stopPropagation();
                 toggleMinimized();
               }}
-              title={isMinimized ? "Expand" : "Minimize"}
+              title={isMinimized ? "ขยาย" : "ย่อ"}
             >
               {isMinimized ? '🔽' : '🔼'}
             </button>
@@ -398,18 +459,20 @@ const BackgroundMusic = () => {
         {!isMinimized && (
           <div className="music-thumbnail">
             <img 
-              src={thumbnail} 
-              alt="Song thumbnail"
+              src={playlist[currentSongIndex].thumbnail} 
+              alt={`${playlist[currentSongIndex].title} cover`}
               className="thumbnail-image"
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/120x68/ff6b9d/ffffff?text=♪';
+                e.target.style.display = 'none';
+                const fallback = e.target.nextSibling;
+                if (fallback && fallback.classList.contains('fallback-overlay')) {
+                  fallback.classList.add('show');
+                }
               }}
             />
-            <div className="thumbnail-overlay">
-              <div className="song-info-mini">
-                <div className="song-title-mini">{playlist[currentSongIndex].title}</div>
-                <div className="song-artist-mini">{playlist[currentSongIndex].artist}</div>
-              </div>
+            <div className="thumbnail-overlay fallback-overlay">
+              <div className="song-title-mini">{playlist[currentSongIndex].title}</div>
+              <div className="song-artist-mini">{playlist[currentSongIndex].artist}</div>
             </div>
           </div>
         )}
@@ -468,7 +531,6 @@ const BackgroundMusic = () => {
                 <span className="play-icon">
                   {isPlaying ? '⏸' : '▶'}
                 </span>
-                <div className="button-glow"></div>
               </button>
               
               <button
@@ -482,19 +544,21 @@ const BackgroundMusic = () => {
             
             {/* Volume Section */}
             <div className="volume-section">
-              <div className="volume-icon">🔊</div>
+              <div className="volume-icon">
+                {isMuted ? '🔇' : '🔊'}
+              </div>
               <input
                 type="range"
                 className="volume-slider"
                 min="0"
                 max="1"
                 step="0.1"
-                value={volume}
+                value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
                 disabled={!isReady}
               />
               <span className="volume-percentage">
-                {Math.round(volume * 100)}%
+                {isMuted ? '0%' : `${Math.round(volume * 100)}%`}
               </span>
             </div>
             
@@ -509,6 +573,7 @@ const BackgroundMusic = () => {
               <div className="song-status">
                 {error ? 'เกิดข้อผิดพลาด' : 
                  isReady ? (isPlaying ? 'กำลังเล่น ♪' : 'พร้อมเล่น ♪') : 'กำลังโหลด...'}
+                {isMuted && ' (ปิดเสียง)'}
               </div>
             </div>
           </div>
@@ -530,23 +595,35 @@ const BackgroundMusic = () => {
               {playlist.map((song, index) => (
                 <div 
                   key={song.id}
-                  className={`playlist-song ${index === currentSongIndex ? 'active' : ''}`}
+                  className={`playlist-song ${index === currentSongIndex ? 'current' : ''}`}
                   onClick={() => changeSong(index)}
                 >
-                  <img 
-                    src={song.thumbnail} 
-                    alt={song.title}
-                    className="playlist-thumbnail"
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/40x22/ff6b9d/ffffff?text=♪';
-                    }}
-                  />
+                  <div className="playlist-thumbnail">
+                    <img 
+                      src={song.thumbnail} 
+                      alt={`${song.title} cover`}
+                      className="playlist-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        const fallback = e.target.nextSibling;
+                        if (fallback && fallback.classList.contains('playlist-fallback')) {
+                          fallback.classList.add('show');
+                        }
+                      }}
+                    />
+                    <div className="playlist-fallback">
+                      <span className="fallback-icon">♪</span>
+                    </div>
+                  </div>
                   <div className="playlist-song-info">
                     <div className="playlist-song-title">{song.title}</div>
                     <div className="playlist-song-artist">{song.artist}</div>
                   </div>
                   {index === currentSongIndex && (
-                    <div className="current-indicator">♪</div>
+                    <div className="current-indicator">
+                      <span className="playing-icon">♪</span>
+                      <span className="playing-text">กำลังเล่น</span>
+                    </div>
                   )}
                 </div>
               ))}

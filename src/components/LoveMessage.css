@@ -1,7 +1,7 @@
 .love-message-popup {
   background: linear-gradient(135deg, #ff6b9d, #ff8fab, #ffb3d1);
-  padding: 3rem;
-  border-radius: 30px;
+  padding: 2.5rem;
+  border-radius: 25px;
   text-align: center;
   box-shadow: 
     0 20px 60px rgba(255, 107, 157, 0.5),
@@ -9,7 +9,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
   border: 3px solid rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
-  width: 500px;
+  width: 450px;
   max-width: 90vw;
   margin: 0;
   z-index: 9999;
@@ -51,8 +51,8 @@
 }
 
 .message-heart {
-  font-size: 4.5rem;
-  margin-bottom: 2rem;
+  font-size: 4rem;
+  margin-bottom: 1.8rem;
   filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
   position: relative;
   z-index: 3;
@@ -67,18 +67,18 @@
 
 .message-text {
   font-family: 'Dancing Script', 'Sarabun', 'Quicksand', cursive;
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: white;
-  margin: 0 0 2rem 0;
-  line-height: 1.5;
+  margin: 0 0 1.8rem 0;
+  line-height: 1.4;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 3;
   font-weight: 600;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   text-align: center;
   background: rgba(255, 255, 255, 0.1);
-  padding: 1.5rem;
+  padding: 1.3rem;
   border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
@@ -88,16 +88,16 @@
   background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.4));
   border: 2px solid rgba(255, 255, 255, 0.8);
   color: white;
-  padding: 1rem 2.5rem;
-  border-radius: 25px;
+  padding: 0.8rem 2.2rem;
+  border-radius: 22px;
   cursor: pointer;
   font-family: 'Fredoka One', 'Kanit', 'Poppins', cursive;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   transition: all 0.3s ease;
   position: relative;
   z-index: 3;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
 }
 
@@ -118,10 +118,10 @@
 
 @media (max-width: 768px) {
   .love-message-popup {
-    padding: 2.5rem;
+    padding: 2rem;
     width: 90vw;
-    max-width: 400px;
-    border-radius: 25px;
+    max-width: 380px;
+    border-radius: 22px;
     /* ปรับตำแหน่งสำหรับมือถือ */
     left: 50% !important;
     top: 50% !important;
@@ -129,19 +129,19 @@
   }
   
   .message-heart {
-    font-size: 4rem;
+    font-size: 3.5rem;
   }
   
   .message-text {
-    font-size: 1.8rem;
-    padding: 1.2rem;
-    letter-spacing: 1.2px;
+    font-size: 1.6rem;
+    padding: 1.1rem;
+    letter-spacing: 1px;
   }
   
   .close-button {
-    padding: 0.8rem 2rem;
-    font-size: 1.1rem;
-    letter-spacing: 0.8px;
+    padding: 0.7rem 1.8rem;
+    font-size: 1rem;
+    letter-spacing: 0.7px;
   }
 }
 
@@ -149,16 +149,16 @@
 @media (max-width: 480px) {
   .love-message-popup {
     width: 95vw;
-    max-width: 350px;
-    padding: 2rem;
+    max-width: 320px;
+    padding: 1.8rem;
   }
   
   .message-text {
-    font-size: 1.6rem;
-    letter-spacing: 1px;
+    font-size: 1.4rem;
+    letter-spacing: 0.8px;
   }
   
   .message-heart {
-    font-size: 3.5rem;
+    font-size: 3rem;
   }
 } 

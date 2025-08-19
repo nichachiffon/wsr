@@ -157,7 +157,7 @@ function LoveLock({ onUnlock }) {
 			// Trigger unlocking of HBD screen shortly after success animation starts
 			setTimeout(() => {
 				onUnlock && onUnlock();
-			}, 1000);
+			}, 4000);
 			return true;
 		}
 
