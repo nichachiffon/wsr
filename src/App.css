@@ -48,24 +48,40 @@
 }
 
 .title {
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-size: 3.5rem;
+  font-family: 'Fredoka One', 'Dancing Script', 'Kanit', cursive;
+  font-size: 6rem;
   font-weight: 700;
   color: #ff6b9d;
-  text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
-  margin-bottom: 1rem;
+  text-shadow: 
+    0 0 20px rgba(255, 107, 157, 0.5),
+    0 4px 8px rgba(255, 107, 157, 0.3),
+    0 8px 16px rgba(255, 107, 157, 0.2);
+  margin-bottom: 1.5rem;
   animation: glow 2s ease-in-out infinite alternate;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, #ff6b9d, #ff8fab, #ffb3d1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.4));
+  line-height: 1.2;
 }
 
 .subtitle {
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-size: 1.2rem;
+  font-family: 'Dancing Script', 'Sarabun', 'Quicksand', cursive;
+  font-size: 2.5rem;
   color: #ff8fab;
   margin-bottom: 3rem;
   font-weight: 600;
-  text-shadow: 0 0 10px rgba(255, 143, 171, 0.5);
-  letter-spacing: 0.5px;
+  text-shadow: 
+    0 0 10px rgba(255, 143, 171, 0.5),
+    0 2px 4px rgba(255, 143, 171, 0.3);
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #ff8fab, #ffb3d1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.4;
 }
 
 .floating-hearts {
@@ -86,23 +102,44 @@
 
 @keyframes glow {
   from {
-    text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+    text-shadow: 
+      0 0 20px rgba(255, 107, 157, 0.5),
+      0 4px 8px rgba(255, 107, 157, 0.3);
   }
   to {
-    text-shadow: 0 0 30px rgba(255, 107, 157, 0.8), 0 0 40px rgba(255, 107, 157, 0.6);
+    text-shadow: 
+      0 0 30px rgba(255, 107, 157, 0.8), 
+      0 0 40px rgba(255, 107, 157, 0.6),
+      0 8px 16px rgba(255, 107, 157, 0.4);
   }
 }
 
 @media (max-width: 768px) {
   .title {
-    font-size: 2.5rem;
+    font-size: 4.5rem;
+    letter-spacing: 2px;
+    line-height: 1.1;
   }
   
   .subtitle {
-    font-size: 1rem;
+    font-size: 2rem;
+    letter-spacing: 1.5px;
+    line-height: 1.3;
   }
   
   .content {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 3.5rem;
+    letter-spacing: 1.5px;
+  }
+  
+  .subtitle {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
   }
 } 

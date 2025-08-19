@@ -43,48 +43,51 @@ canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
 
 .hero { text-align: center; opacity: 0; animation: ll-fadeUp 1s ease 0.3s forwards; }
 @keyframes ll-fadeUp { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: translateY(0);} }
-.hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 700; margin-bottom: 0.5rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 30px rgba(255, 107, 157, 0.35); letter-spacing: -0.02em; }
-.script { font-family: "Great Vibes", cursive; color: var(--accent); filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.45)); font-weight: 400; }
+.hero h1 { font-family: 'Fredoka One', 'Dancing Script', 'Kanit', cursive; font-size: clamp(3rem, 10vw, 5rem); font-weight: 700; margin-bottom: 0.5rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 30px rgba(255, 107, 157, 0.35); letter-spacing: 1px; line-height: 1.2; }
+.script { font-family: 'Dancing Script', 'Sarabun', 'Great Vibes', cursive; color: var(--accent); filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.45)); font-weight: 400; }
 .hero h1 .script { background: none !important; -webkit-background-clip: border-box; background-clip: border-box; -webkit-text-fill-color: var(--accent); color: var(--accent); display: inline-block; }
 
-.lock-card { width: min(520px, 95vw); background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 179, 209, 0.6); border-radius: 32px; padding: 3rem 2rem 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 2rem; box-shadow: var(--shadow-primary), var(--shadow-glow), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(255, 182, 193, 0.25); transform: translateZ(0) rotateX(5deg); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); opacity: 0; animation: ll-in 1s ease 0.5s forwards; position: relative; overflow: hidden; }
+.lock-card { width: min(580px, 95vw); background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 179, 209, 0.6); border-radius: 32px; padding: 3.5rem 2.5rem 3rem; display: flex; flex-direction: column; align-items: center; gap: 2rem; box-shadow: var(--shadow-primary), var(--shadow-glow), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(255, 182, 193, 0.25); transform: translateZ(0) rotateX(5deg); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); opacity: 0; animation: ll-in 1s ease 0.5s forwards; position: relative; overflow: hidden; }
 @keyframes ll-in { from { opacity: 0; transform: translateZ(-100px) rotateX(15deg) scale(0.9); } to { opacity: 1; transform: translateZ(0) rotateX(5deg) scale(1);} }
 .lock-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); transition: left 0.6s; }
 .lock-card:hover::before { left: 100%; }
 .lock-card:hover { transform: translateZ(20px) rotateX(0deg) scale(1.02); box-shadow: 0 30px 80px rgba(255, 182, 193, 0.45), 0 0 120px rgba(255, 107, 157, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6); }
 
-.lock-3d { width: 280px; height: 320px; position: relative; transform: translateZ(60px); transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1); filter: drop-shadow(0 20px 40px rgba(255, 61, 110, 0.25)); }
+.lock-3d { width: 300px; height: 340px; position: relative; transform: translateZ(60px); transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1); filter: drop-shadow(0 20px 40px rgba(255, 61, 110, 0.25)); }
 .lock-card:hover .lock-3d { transform: translateZ(80px) rotateY(5deg); filter: drop-shadow(0 30px 60px rgba(255, 61, 110, 0.4)); }
 .lock-svg { width: 100%; height: auto; position: relative; z-index: 2; pointer-events: none; }
 
-.dials { position: absolute; left: 50%; top: 180px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; background: rgba(255, 245, 247, 0.8); backdrop-filter: blur(10px) saturate(200%); border: 1px solid rgba(255, 179, 209, 0.7); border-radius: 20px; padding: 1rem 1.2rem; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 179, 209, 0.35); z-index: 3; pointer-events: auto; }
-.dial { width: 48px; height: 120px; display: flex; flex-direction: column; align-items: center; background: linear-gradient(180deg, rgba(255, 179, 209, 0.25), rgba(255, 143, 171, 0.15)); border: 1px solid rgba(255, 179, 209, 0.7); border-radius: 12px; position: relative; transition: all 0.3s ease; cursor: pointer; z-index: 4; touch-action: none; user-select: none; pointer-events: auto; }
+.dials { position: absolute; left: 50%; top: 190px; transform: translateX(-50%); display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; background: rgba(255, 245, 247, 0.8); backdrop-filter: blur(10px) saturate(200%); border: 1px solid rgba(255, 179, 209, 0.7); border-radius: 20px; padding: 1.2rem 1.4rem; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 179, 209, 0.35); z-index: 3; pointer-events: auto; }
+.dial { width: 52px; height: 130px; display: flex; flex-direction: column; align-items: center; background: linear-gradient(180deg, rgba(255, 179, 209, 0.25), rgba(255, 143, 171, 0.15)); border: 1px solid rgba(255, 179, 209, 0.7); border-radius: 12px; position: relative; transition: all 0.3s ease; cursor: pointer; z-index: 4; touch-action: none; user-select: none; pointer-events: auto; }
 .dial:hover { background: linear-gradient(180deg, rgba(255, 179, 209, 0.35), rgba(255, 143, 171, 0.25)); border-color: rgba(255, 179, 209, 0.9); transform: none; box-shadow: 0 5px 15px rgba(255, 143, 171, 0.35); }
 .dial::before { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; height: 20px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent); border-radius: 10px 10px 0 0; pointer-events: none; }
-.arrow { appearance: none; border: none; background: transparent; color: var(--accent); cursor: pointer; font-size: 16px; line-height: 1; padding: 8px; border-radius: 8px; transition: all 0.2s ease; font-weight: 600; text-shadow: 0 0 10px rgba(255, 107, 157, 0.5); width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(255, 179, 209, 0.7); background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.12)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 10px rgba(255, 182, 193, 0.45); }
+.arrow { appearance: none; border: none; background: transparent; color: var(--accent); cursor: pointer; font-size: 18px; line-height: 1; padding: 8px; border-radius: 8px; transition: all 0.2s ease; font-weight: 600; text-shadow: 0 0 10px rgba(255, 107, 157, 0.5); width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(255, 179, 209, 0.7); background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.12)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 10px rgba(255, 182, 193, 0.45); font-family: 'Fredoka One', 'Kanit', cursive; }
 .arrow:hover { background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.18)); border-color: rgba(255, 179, 209, 0.9); transform: scale(1.2); text-shadow: 0 0 15px rgba(255, 107, 157, 0.8); }
 .arrow:active { transform: scale(0.95) translateZ(0); }
 .reel { display: none; }
-.digit { display: grid; place-items: center; height: var(--reel-cell); width: 100%; font-size: 32px; font-weight: 700; color: #ff6b9d; text-shadow: 0 1px 0 rgba(255, 143, 171, 0.6), 0 0 22px rgba(255, 107, 157, 0.55); font-variant-numeric: tabular-nums; user-select: none; pointer-events: none; }
+.digit { display: grid; place-items: center; height: var(--reel-cell); width: 100%; font-family: 'Fredoka One', 'Kanit', 'Poppins', sans-serif; font-size: 36px; font-weight: 700; color: #ff6b9d; text-shadow: 0 1px 0 rgba(255, 143, 171, 0.6), 0 0 22px rgba(255, 107, 157, 0.55); font-variant-numeric: tabular-nums; user-select: none; pointer-events: none; }
 
-.love-message { background: rgba(255, 182, 193, 0.2); backdrop-filter: blur(15px); border: 1px solid rgba(255, 179, 209, 0.6); border-radius: 20px; padding: 2rem; text-align: center; transform: scale(0.8); opacity: 0; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+.love-message { background: rgba(255, 182, 193, 0.2); backdrop-filter: blur(15px); border: 1px solid rgba(255, 179, 209, 0.6); border-radius: 20px; padding: 2.5rem; text-align: center; transform: scale(0.8); opacity: 0; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 .love-message.show { opacity: 1; transform: scale(1); }
-.love-message h2 { font-size: 2rem; margin-bottom: 1rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.love-message h2 { font-family: 'Dancing Script', 'Sarabun', 'Quicksand', cursive; font-size: 2.5rem; margin-bottom: 1.5rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; line-height: 1.3; }
 
 .love-overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 5; background: rgba(255, 245, 247, 0.86); backdrop-filter: blur(20px); opacity: 0; transition: opacity 1s ease; pointer-events: none; }
 .love-overlay.show { opacity: 1; pointer-events: auto; }
-.love-overlay h2 { font-size: clamp(2rem, 6vw, 4rem); margin-bottom: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.5)); }
+.love-overlay h2 { font-family: 'Fredoka One', 'Dancing Script', 'Kanit', cursive; font-size: clamp(2.5rem, 8vw, 5rem); margin-bottom: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.5)); letter-spacing: 1px; line-height: 1.2; }
 .scene.fade-out > * { opacity: 0; transform: translateY(-20px) scale(0.95); transition: all 1s ease; }
-.footer { text-align: center; color: var(--muted); font-size: 12px; padding: 2rem; opacity: 0.6; }
+.footer { font-family: 'Sarabun', 'Quicksand', 'Poppins', sans-serif; text-align: center; color: var(--muted); font-size: 14px; padding: 2rem; opacity: 0.6; letter-spacing: 0.5px; }
 
 @media (max-width: 640px) {
 	.scene { padding: 2vh 12px; gap: 1.5rem; }
-	.lock-card { width: min(400px, 92vw); padding: 2rem 1.5rem 2rem; }
-	.lock-3d { width: 240px; height: 280px; }
-	.dials { gap: 0.3rem; padding: 0.8rem 1rem; top: 160px; }
-	.dial { width: 42px; height: 100px; }
-	:root { --reel-cell: 50px; }
-	.digit { font-size: 28px; }
+	.lock-card { width: min(450px, 92vw); padding: 2.5rem 2rem 2.5rem; }
+	.lock-3d { width: 260px; height: 300px; }
+	.dials { gap: 0.4rem; padding: 1rem 1.2rem; top: 170px; }
+	.dial { width: 46px; height: 110px; }
+	:root { --reel-cell: 55px; }
+	.digit { font-size: 32px; }
+	.hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); }
+	.love-message h2 { font-size: 2.2rem; }
+	.love-overlay h2 { font-size: clamp(2.2rem, 6vw, 4rem); }
 }
 
 

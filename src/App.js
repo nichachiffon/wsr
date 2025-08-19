@@ -12,18 +12,35 @@ function App() {
   const [showMessage, setShowMessage] = useState(false);
   const [currentMessage, setCurrentMessage] = useState(0);
 
+  // Debug useEffect
+  useEffect(() => {
+    console.log('showMessage changed to:', showMessage);
+    console.log('currentMessage changed to:', currentMessage);
+  }, [showMessage, currentMessage]);
+
   const loveMessages = [
     "เค้ารักเบบี๋ อิอิ",
     "เค้ารักเบบี๋ที่สุดในโลก(ของเค้าเอง)",
     "Happy birthday to the one Who stole my heart !",
     "ขอให้เบบี๋ไม่ปวดหลังตลอดไป",
-    "คิดไม่ออกละ คิดถึงแต่เบบี๋",
-    
+    "คิดไม่ออกละ คิดถึงแต่เบบี๋"
   ];
 
   const handleLoveClick = () => {
-    setCurrentMessage(Math.floor(Math.random() * loveMessages.length));
-    setShowMessage(true);
+    console.log('Button clicked!');
+    const randomIndex = Math.floor(Math.random() * loveMessages.length);
+    console.log('Random index:', randomIndex);
+    console.log('Message:', loveMessages[randomIndex]);
+    
+    // ปิด popup ก่อนเพื่อให้แสดงใหม่ในตำแหน่งใหม่
+    setShowMessage(false);
+    
+    // รอสักครู่แล้วแสดง popup ใหม่
+    setTimeout(() => {
+      setCurrentMessage(randomIndex);
+      setShowMessage(true);
+      console.log('showMessage set to true with new position');
+    }, 100);
   };
 
   const handleMessageClose = () => {

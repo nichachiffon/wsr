@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './BackgroundMusic.css';
 
 const BackgroundMusic = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -6,13 +7,51 @@ const BackgroundMusic = () => {
   const [player, setPlayer] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [thumbnail, setThumbnail] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [autoplayAttempted, setAutoplayAttempted] = useState(false);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+  
   const playerRef = useRef(null);
   const initializationRef = useRef(false);
+  const progressRef = useRef(null);
+  const timeUpdateInterval = useRef(null);
+
+  // Playlist data
+  const playlist = [
+    {
+      id: 'ThEftPScNwA',
+      title: 'FALL IN LOVE W/NOT',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/ThEftPScNwA/maxresdefault.jpg'
+    },
+    {
+      id: 'dQw4w9WgXcQ',
+      title: 'Never Gonna Give You Up',
+      artist: 'Rick Astley',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg'
+    },
+    {
+      id: '9bZkp7q19f0',
+      title: 'PSY - GANGNAM STYLE',
+      artist: 'PSY',
+      thumbnail: 'https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg'
+    }
+  ];
 
   useEffect(() => {
     // Prevent multiple initializations
     if (initializationRef.current) return;
     initializationRef.current = true;
+
+    // Set initial thumbnail
+    setThumbnail(playlist[currentSongIndex].thumbnail);
 
     // Load YouTube API
     const loadYouTubeAPI = () => {
@@ -59,9 +98,9 @@ const BackgroundMusic = () => {
         const ytPlayer = new window.YT.Player(playerRef.current, {
           height: '0',
           width: '0',
-          videoId: 'ThEftPScNwA',
+          videoId: playlist[currentSongIndex].id,
           playerVars: {
-            autoplay: 0,
+            autoplay: 1, // Enable autoplay
             controls: 0,
             disablekb: 1,
             enablejsapi: 1,
@@ -72,7 +111,8 @@ const BackgroundMusic = () => {
             start: 14, // Start at 14 seconds
             end: 0,   // Play until end
             loop: 0,    // We'll handle looping manually
-            playlist: 'ThEftPScNwA' // Required for looping
+            playlist: playlist[currentSongIndex].id, // Required for looping
+            mute: 0 // Start unmuted
           },
           events: {
             onReady: (event) => {
@@ -82,6 +122,28 @@ const BackgroundMusic = () => {
                 setPlayer(event.target);
                 setIsReady(true);
                 setError(null);
+                
+                // Start time update interval
+                timeUpdateInterval.current = setInterval(() => {
+                  if (event.target.getCurrentTime && event.target.getDuration) {
+                    setCurrentTime(event.target.getCurrentTime());
+                    setDuration(event.target.getDuration());
+                  }
+                }, 1000);
+                
+                // Attempt autoplay
+                if (!autoplayAttempted && autoplayEnabled) {
+                  setAutoplayAttempted(true);
+                  setTimeout(() => {
+                    try {
+                      event.target.playVideo();
+                      console.log('Autoplay attempted');
+                    } catch (err) {
+                      console.log('Autoplay failed, user interaction required');
+                      setError('คลิกปุ่มเล่นเพื่อเริ่มเพลง (เบราว์เซอร์ต้องการการโต้ตอบจากผู้ใช้)');
+                    }
+                  }, 1000); // Small delay to ensure player is fully ready
+                }
               } catch (err) {
                 console.error('Error in onReady:', err);
                 setError('เกิดข้อผิดพลาดในการเตรียม player');
@@ -98,13 +160,14 @@ const BackgroundMusic = () => {
                   event.target.playVideo();
                 } else if (state === playerState.PLAYING) {
                   setIsPlaying(true);
-                  // Check if we need to loop (removed time range check since we play full video)
+                  setError(null); // Clear any autoplay errors when playing starts
                   console.log('Playing...');
                 } else if (state === playerState.PAUSED) {
                   setIsPlaying(false);
                 } else if (state === playerState.BUFFERING) {
-                  // Handle buffering state
                   console.log('Player is buffering...');
+                } else if (state === playerState.CUED) {
+                  console.log('Player cued and ready');
                 }
               } catch (err) {
                 console.error('Error in onStateChange:', err);
@@ -140,6 +203,9 @@ const BackgroundMusic = () => {
         } catch (err) {
           console.error('Error destroying player:', err);
         }
+      }
+      if (timeUpdateInterval.current) {
+        clearInterval(timeUpdateInterval.current);
       }
     };
   }, []); // Remove volume dependency to prevent re-initialization
@@ -183,133 +249,310 @@ const BackgroundMusic = () => {
     setError(null);
   };
 
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const toggleMinimized = () => {
+    setIsMinimized(!isMinimized);
+  };
+
+  const togglePlaylist = () => {
+    setShowPlaylist(!showPlaylist);
+  };
+
+  const toggleAutoplay = () => {
+    setAutoplayEnabled(!autoplayEnabled);
+    if (!autoplayEnabled && player && isReady && !isPlaying) {
+      // If enabling autoplay and player is ready but not playing, start playing
+      try {
+        player.playVideo();
+      } catch (err) {
+        console.log('Cannot start playing automatically');
+      }
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleProgressClick = (e) => {
+    if (!player || !isReady) return;
+    
+    const rect = progressRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const progressWidth = rect.width;
+    const clickPercent = clickX / progressWidth;
+    const newTime = clickPercent * duration;
+    
+    player.seekTo(newTime);
+    setCurrentTime(newTime);
+  };
+
+  const handleProgressDrag = (e) => {
+    if (!player || !isReady) return;
+    
+    setIsDragging(true);
+    const rect = progressRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const progressWidth = rect.width;
+    const clickPercent = Math.max(0, Math.min(1, clickX / progressWidth));
+    const newTime = clickPercent * duration;
+    
+    setCurrentTime(newTime);
+  };
+
+  const handleProgressDragEnd = () => {
+    if (!player || !isReady) return;
+    
+    setIsDragging(false);
+    player.seekTo(currentTime);
+  };
+
+  const changeSong = (index) => {
+    if (index === currentSongIndex) return;
+    
+    setCurrentSongIndex(index);
+    setThumbnail(playlist[index].thumbnail);
+    
+    if (player && isReady) {
+      player.loadVideoById(playlist[index].id);
+      player.seekTo(14);
+      if (isPlaying) {
+        player.playVideo();
+      }
+    }
+  };
+
+  const nextSong = () => {
+    const nextIndex = (currentSongIndex + 1) % playlist.length;
+    changeSong(nextIndex);
+  };
+
+  const prevSong = () => {
+    const prevIndex = currentSongIndex === 0 ? playlist.length - 1 : currentSongIndex - 1;
+    changeSong(prevIndex);
+  };
+
   return (
-    <div className="background-music" style={{
-      position: 'fixed',
-      top: '20px',
-      right: '20px',
-      zIndex: 1000,
-      background: 'rgba(0, 0, 0, 0.8)',
-      borderRadius: '15px',
-      padding: '15px',
-      backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      fontFamily: 'Arial, sans-serif',
-      maxWidth: '350px'
-    }}>
+    <div className={`background-music ${isMinimized ? 'minimized' : ''}`}>
       {/* Hidden YouTube player */}
       <div 
         ref={playerRef}
         style={{ display: 'none' }}
       />
       
-      {/* Error display */}
-      {error && (
-        <div style={{
-          background: 'rgba(255, 0, 0, 0.2)',
-          border: '1px solid rgba(255, 0, 0, 0.5)',
-          borderRadius: '8px',
-          padding: '8px',
-          marginBottom: '10px',
-          fontSize: '12px',
-          color: '#ffcccc',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span>{error}</span>
-          <button 
-            onClick={clearError}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#ffcccc',
-              cursor: 'pointer',
-              fontSize: '14px',
-              padding: '0 5px'
-            }}
-          >
-            ✕
-          </button>
+      {/* Main Music Player */}
+      <div className={`music-player ${isExpanded ? 'expanded' : ''}`}>
+        {/* Header with expand/collapse and minimize */}
+        <div className="music-header" onClick={toggleExpanded}>
+          <div className="music-icon">
+            <span className="music-note">♪</span>
+            {isPlaying && <div className="music-waves">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>}
+          </div>
+          <div className="header-controls">
+            <button 
+              className={`control-btn autoplay-btn ${autoplayEnabled ? 'active' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleAutoplay();
+              }}
+              title={autoplayEnabled ? "Disable Autoplay" : "Enable Autoplay"}
+            >
+              {autoplayEnabled ? '🔊' : '🔇'}
+            </button>
+            <button 
+              className="control-btn playlist-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePlaylist();
+              }}
+              title="Playlist"
+            >
+              📋
+            </button>
+            <button 
+              className="control-btn minimize-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleMinimized();
+              }}
+              title={isMinimized ? "Expand" : "Minimize"}
+            >
+              {isMinimized ? '🔽' : '🔼'}
+            </button>
+            <div className="expand-icon">
+              {isExpanded ? '−' : '+'}
+            </div>
+          </div>
         </div>
-      )}
-      
-      {/* Music controls */}
-      <div 
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '15px',
-          color: 'white'
-        }}
-      >
-        <button
-          onClick={togglePlay}
-          disabled={!isReady}
-          style={{
-            background: isPlaying ? 'linear-gradient(45deg, #ff6b6b, #ee5a24)' : 'linear-gradient(45deg, #4CAF50, #45a049)',
-            border: 'none',
-            borderRadius: '50%',
-            width: '50px',
-            height: '50px',
-            fontSize: '20px',
-            cursor: isReady ? 'pointer' : 'not-allowed',
-            transition: 'all 0.3s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: isReady ? 1 : 0.5,
-            boxShadow: isReady ? '0 4px 15px rgba(0,0,0,0.3)' : 'none'
-          }}
-          onMouseEnter={(e) => {
-            if (isReady) e.target.style.transform = 'scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'scale(1)';
-          }}
-        >
-          {isPlaying ? '⏸️' : '▶️'}
-        </button>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-          <span style={{ fontSize: '16px' }}>🔊</span>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={volume}
-            onChange={handleVolumeChange}
-            disabled={!isReady}
-            style={{
-              width: '80px',
-              height: '5px',
-              borderRadius: '5px',
-              background: isReady ? '#ddd' : '#666',
-              outline: 'none',
-              cursor: isReady ? 'pointer' : 'not-allowed',
-              opacity: isReady ? 1 : 0.5
-            }}
-          />
-          <span style={{ fontSize: '12px', minWidth: '30px' }}>
-            {Math.round(volume * 100)}%
-          </span>
-        </div>
-      </div>
-      
-      <div style={{
-        marginTop: '10px',
-        fontSize: '12px',
-        textAlign: 'center',
-        color: 'white'
-      }}>
-        <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
-         FALL IN LOVE W/NOT
-        </div>
-        <div style={{ opacity: 0.7, fontSize: '10px' }}>
-          {error ? 'เกิดข้อผิดพลาด' : 
-           isReady ? (isPlaying ? 'กำลังเล่น' : 'พร้อมเล่น') : 'กำลังโหลด...'}
-        </div>
+
+        {/* Thumbnail and Basic Info (always visible when not minimized) */}
+        {!isMinimized && (
+          <div className="music-thumbnail">
+            <img 
+              src={thumbnail} 
+              alt="Song thumbnail"
+              className="thumbnail-image"
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/120x68/ff6b9d/ffffff?text=♪';
+              }}
+            />
+            <div className="thumbnail-overlay">
+              <div className="song-info-mini">
+                <div className="song-title-mini">{playlist[currentSongIndex].title}</div>
+                <div className="song-artist-mini">{playlist[currentSongIndex].artist}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Expanded Content */}
+        {isExpanded && !isMinimized && (
+          <div className="music-content">
+            {/* Error display */}
+            {error && (
+              <div className="error-message">
+                <span className="error-text">{error}</span>
+                <button 
+                  className="error-close"
+                  onClick={clearError}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            
+            {/* Progress Bar */}
+            <div className="progress-section">
+              <div className="time-display">
+                <span className="current-time">{formatTime(currentTime)}</span>
+                <span className="duration">{formatTime(duration)}</span>
+              </div>
+              <div 
+                className="progress-bar"
+                ref={progressRef}
+                onClick={handleProgressClick}
+                onMouseDown={handleProgressDrag}
+                onMouseMove={isDragging ? handleProgressDrag : undefined}
+                onMouseUp={handleProgressDragEnd}
+                onMouseLeave={handleProgressDragEnd}
+              >
+                <div className="progress-fill" style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+                <div className="progress-thumb" style={{ left: `${(currentTime / duration) * 100}%` }}></div>
+              </div>
+            </div>
+            
+            {/* Music controls */}
+            <div className="music-controls">
+              <button
+                className="control-btn prev-btn"
+                onClick={prevSong}
+                title="Previous Song"
+              >
+                ⏮
+              </button>
+              
+              <button
+                className={`play-button ${isPlaying ? 'playing' : ''} ${!isReady ? 'disabled' : ''}`}
+                onClick={togglePlay}
+                disabled={!isReady}
+              >
+                <span className="play-icon">
+                  {isPlaying ? '⏸' : '▶'}
+                </span>
+                <div className="button-glow"></div>
+              </button>
+              
+              <button
+                className="control-btn next-btn"
+                onClick={nextSong}
+                title="Next Song"
+              >
+                ⏭
+              </button>
+            </div>
+            
+            {/* Volume Section */}
+            <div className="volume-section">
+              <div className="volume-icon">🔊</div>
+              <input
+                type="range"
+                className="volume-slider"
+                min="0"
+                max="1"
+                step="0.1"
+                value={volume}
+                onChange={handleVolumeChange}
+                disabled={!isReady}
+              />
+              <span className="volume-percentage">
+                {Math.round(volume * 100)}%
+              </span>
+            </div>
+            
+            {/* Music info */}
+            <div className="music-info">
+              <div className="song-title">
+                {playlist[currentSongIndex].title}
+              </div>
+              <div className="song-artist">
+                {playlist[currentSongIndex].artist}
+              </div>
+              <div className="song-status">
+                {error ? 'เกิดข้อผิดพลาด' : 
+                 isReady ? (isPlaying ? 'กำลังเล่น ♪' : 'พร้อมเล่น ♪') : 'กำลังโหลด...'}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Playlist */}
+        {showPlaylist && !isMinimized && (
+          <div className="playlist-panel">
+            <div className="playlist-header">
+              <span className="playlist-title">🎵 Playlist</span>
+              <button 
+                className="playlist-close"
+                onClick={togglePlaylist}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="playlist-songs">
+              {playlist.map((song, index) => (
+                <div 
+                  key={song.id}
+                  className={`playlist-song ${index === currentSongIndex ? 'active' : ''}`}
+                  onClick={() => changeSong(index)}
+                >
+                  <img 
+                    src={song.thumbnail} 
+                    alt={song.title}
+                    className="playlist-thumbnail"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/40x22/ff6b9d/ffffff?text=♪';
+                    }}
+                  />
+                  <div className="playlist-song-info">
+                    <div className="playlist-song-title">{song.title}</div>
+                    <div className="playlist-song-artist">{song.artist}</div>
+                  </div>
+                  {index === currentSongIndex && (
+                    <div className="current-indicator">♪</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
