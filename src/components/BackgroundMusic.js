@@ -34,22 +34,28 @@ const BackgroundMusic = () => {
       thumbnail: 'https://img.youtube.com/vi/ThEftPScNwA/maxresdefault.jpg'
     },
     {
-      id: 'Am-lOD0AvVE',
-      title: 'Plum Condo',
-      artist: 'BABYBIGBOY',
-      thumbnail: 'https://img.youtube.com/vi/Am-lOD0AvVE/maxresdefault.jpg'
+      id: 'lYl7WhMvq9g',
+      title: 'ข้อดีข้อเดียวคือรักน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/lYl7WhMvq9g/maxresdefault.jpg'
     },
     {
-      id: 'dQw4w9WgXcQ',
-      title: 'Never Gonna Give You Up',
-      artist: 'Rick Astley',
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg'
+      id: '1QkX7Qetu2Q',
+      title: 'I LOVE NOT A CHATHAI',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/1QkX7Qetu2Q/maxresdefault.jpg'
     },
     {
-      id: '9bZkp7q19f0',
-      title: 'PSY - GANGNAM STYLE',
-      artist: 'PSY',
-      thumbnail: 'https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg'
+      id: '37tdCAli3N0',
+      title: '사랑해',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/37tdCAli3N0/maxresdefault.jpg'
+    },
+    {
+      id: 'YAB_X4Tdbgs',
+      title: 'NOT IS MINE !!!',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/YAB_X4Tdbgs/maxresdefault.jpg'
     }
   ];
 

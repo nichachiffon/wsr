@@ -592,7 +592,7 @@ function LoveLock({ onUnlock }) {
 				</div>
 
 				<div className="love-message" id="loveMessage" hidden>
-					<h2 className="script">Locked in Love</h2>
+					<h2 className="script">GooD JoB My lil Baby ♡ </h2>
 				</div>
 			</section>
 
