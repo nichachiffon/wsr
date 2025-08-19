@@ -1,0 +1,58 @@
+.heartbeat-monitor {
+  position: relative;
+  margin: 2rem 0;
+}
+
+.ekg-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ekg {
+  position: absolute;
+  max-width: 300px;
+  filter: blur(10px);
+}
+
+.ekg:nth-of-type(2) {
+  filter: blur(5px);
+}
+
+.ekg:nth-of-type(3) {
+  filter: blur(15px);
+}
+
+.ekg:nth-of-type(4) {
+  filter: blur(8px);
+}
+
+.ekg-path {
+  fill: none;
+  fill-rule: evenodd;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-miterlimit: 4;
+  stroke-opacity: 1;
+  stroke: #ffb3d1;
+}
+
+.ekg-path.novelty {
+  stroke: #ff6b9d;
+  stroke-width: 6;
+  filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.5));
+}
+
+@media (min-width: 768px) {
+  .ekg {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ekg {
+    max-width: 600px;
+  }
+} 

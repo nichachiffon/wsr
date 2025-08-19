@@ -1,0 +1,115 @@
+.love-message-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 245, 247, 0.9);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  cursor: pointer;
+}
+
+.love-message {
+  background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+  padding: 3rem;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(255, 107, 157, 0.4);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  max-width: 500px;
+  margin: 2rem;
+}
+
+.love-message::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.message-heart {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+  position: relative;
+  z-index: 2;
+}
+
+.message-text {
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-size: 1.8rem;
+  color: white;
+  margin-bottom: 2rem;
+  line-height: 1.4;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.close-button {
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.message-floating-heart {
+  position: absolute;
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .love-message {
+    padding: 2rem;
+    margin: 1rem;
+    max-width: 90%;
+  }
+  
+  .message-heart {
+    font-size: 3rem;
+  }
+  
+  .message-text {
+    font-size: 1.4rem;
+  }
+  
+  .close-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+} 
