@@ -13,10 +13,7 @@ const BackgroundMusic = () => {
   const [duration, setDuration] = useState(0);
   const [thumbnail, setThumbnail] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const [showPlaylist, setShowPlaylist] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
-  const [autoplayAttempted, setAutoplayAttempted] = useState(false);
-  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   
@@ -28,10 +25,10 @@ const BackgroundMusic = () => {
   // Playlist data
   const playlist = [
     {
-      id: 'ThEftPScNwA',
+      id: 'nR-eDSChKqw',
       title: 'FALL IN LOVE W/NOT',
       artist: 'NOT',
-      thumbnail: 'https://img.youtube.com/vi/ThEftPScNwA/maxresdefault.jpg'
+      thumbnail: 'https://img.youtube.com/vi/nR-eDSChKqw/maxresdefault.jpg'
     },
     {
       id: 'lYl7WhMvq9g',
@@ -56,6 +53,12 @@ const BackgroundMusic = () => {
       title: 'NOT IS MINE !!!',
       artist: 'NOT',
       thumbnail: 'https://img.youtube.com/vi/YAB_X4Tdbgs/maxresdefault.jpg'
+    },
+    {
+      id: '7vSdwtHm5q0',
+      title: 'LOVE NOT 24 HR.',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/7vSdwtHm5q0/maxresdefault.jpg'
     }
   ];
 
@@ -114,7 +117,7 @@ const BackgroundMusic = () => {
           width: '0',
           videoId: playlist[currentSongIndex].id,
           playerVars: {
-            autoplay: 1, // Enable autoplay
+            autoplay: 0, // Disable autoplay
             controls: 0,
             disablekb: 1,
             enablejsapi: 1,
@@ -122,10 +125,9 @@ const BackgroundMusic = () => {
             iv_load_policy: 3,
             modestbranding: 1,
             rel: 0,
-            start: 14, // Start at 14 seconds
+            start: 10, // Start at 10 seconds
             end: 0,   // Play until end
-            loop: 0,    // We'll handle looping manually
-            playlist: playlist[currentSongIndex].id, // Required for looping
+            loop: 0,    // No looping
             mute: 0 // Start unmuted
           },
           events: {
@@ -145,21 +147,7 @@ const BackgroundMusic = () => {
                   }
                 }, 1000);
                 
-                // Attempt autoplay
-                if (!autoplayAttempted && autoplayEnabled) {
-                  setAutoplayAttempted(true);
-                  setTimeout(() => {
-                    try {
-                      event.target.seekTo(14);
-                      event.target.playVideo();
-                      setHasStarted(true);
-                      console.log('Autoplay attempted');
-                    } catch (err) {
-                      console.log('Autoplay failed, user interaction required');
-                      setError('คลิกปุ่มเล่นเพื่อเริ่มเพลง (เบราว์เซอร์ต้องการการโต้ตอบจากผู้ใช้)');
-                    }
-                  }, 1000); // Small delay to ensure player is fully ready
-                }
+                console.log('Player ready - no autoplay');
               } catch (err) {
                 console.error('Error in onReady:', err);
                 setError('เกิดข้อผิดพลาดในการเตรียม player');
@@ -171,21 +159,34 @@ const BackgroundMusic = () => {
                 const playerState = window.YT.PlayerState;
                 
                 if (state === playerState.ENDED) {
-                  // Loop back to 14 seconds only when song actually ends
-                  event.target.seekTo(14);
-                  event.target.playVideo();
-                  setHasStarted(false); // Reset for next loop
+                  // Song ended - just stop
+                  console.log('Song ended');
+                  setIsPlaying(false);
+                  setCurrentTime(0);
                 } else if (state === playerState.PLAYING) {
                   setIsPlaying(true);
-                  setError(null); // Clear any autoplay errors when playing starts
+                  setError(null);
                   console.log('Playing...');
+                  
+                  // Start time update interval if not already running
+                  if (!timeUpdateInterval.current) {
+                    timeUpdateInterval.current = setInterval(() => {
+                      if (event.target.getCurrentTime && event.target.getDuration) {
+                        setCurrentTime(event.target.getCurrentTime());
+                        setDuration(event.target.getDuration());
+                      }
+                    }, 1000);
+                    console.log('Started time update interval');
+                  }
+                } else if (state === playerState.CUED) {
+                  console.log('Player cued and ready');
+                  setCurrentTime(0);
+                  setDuration(0);
                 } else if (state === playerState.PAUSED) {
                   setIsPlaying(false);
                   console.log('Paused at:', event.target.getCurrentTime());
                 } else if (state === playerState.BUFFERING) {
                   console.log('Player is buffering...');
-                } else if (state === playerState.CUED) {
-                  console.log('Player cued and ready');
                 }
               } catch (err) {
                 console.error('Error in onStateChange:', err);
@@ -226,7 +227,7 @@ const BackgroundMusic = () => {
         clearInterval(timeUpdateInterval.current);
       }
     };
-  }, []); // Remove volume dependency to prevent re-initialization
+  }, []);
 
   useEffect(() => {
     if (player && isReady && typeof player.setVolume === 'function') {
@@ -260,11 +261,12 @@ const BackgroundMusic = () => {
         // Pause the video at current position
         player.pauseVideo();
       } else {
-        // Resume from current position, only seek to 14 if it's the first time
+        // Resume from current position, only seek to 10 if it's the first time
         if (!hasStarted) {
-          player.seekTo(14);
+          player.seekTo(10);
           setHasStarted(true);
         }
+        // If already started, just resume from current position
         player.playVideo();
       }
     } catch (error) {
@@ -294,10 +296,6 @@ const BackgroundMusic = () => {
     setIsMinimized(!isMinimized);
   };
 
-  const togglePlaylist = () => {
-    setShowPlaylist(!showPlaylist);
-  };
-
   const toggleMute = () => {
     if (!player || !isReady) return;
     
@@ -313,18 +311,6 @@ const BackgroundMusic = () => {
       }
     } catch (err) {
       console.error('Error toggling mute:', err);
-    }
-  };
-
-  const toggleAutoplay = () => {
-    setAutoplayEnabled(!autoplayEnabled);
-    if (!autoplayEnabled && player && isReady && !isPlaying) {
-      // If enabling autoplay and player is ready but not playing, start playing
-      try {
-        player.playVideo();
-      } catch (err) {
-        console.log('Cannot start playing automatically');
-      }
     }
   };
 
@@ -368,19 +354,48 @@ const BackgroundMusic = () => {
   };
 
   const changeSong = (index) => {
-    if (index === currentSongIndex) return;
+    console.log('changeSong called with index:', index, 'currentSongIndex:', currentSongIndex);
+    if (index === currentSongIndex) {
+      console.log('Same song, returning early');
+      return;
+    }
     
+    console.log('Changing to song:', playlist[index].title);
     setCurrentSongIndex(index);
     setThumbnail(playlist[index].thumbnail);
-    setHasStarted(false); // Reset hasStarted for new song
-    setCurrentTime(0); // Reset current time for new song
+    setHasStarted(false);
+    setCurrentTime(0);
+    setDuration(0);
+    
+    // Clear existing time update interval
+    if (timeUpdateInterval.current) {
+      clearInterval(timeUpdateInterval.current);
+      timeUpdateInterval.current = null;
+    }
     
     if (player && isReady) {
-      player.loadVideoById(playlist[index].id);
-      player.seekTo(14);
-      if (isPlaying) {
-        player.playVideo();
+      console.log('Loading new video:', playlist[index].id);
+      try {
+        // Use cueVideoById and then start playing at 10 seconds
+        player.cueVideoById(playlist[index].id, 10);
+        
+        // Auto-play the new song after a short delay
+        setTimeout(() => {
+          if (player && player.playVideo) {
+            player.playVideo();
+            setIsPlaying(true);
+            setHasStarted(true);
+            console.log('New song started playing at 10 seconds');
+          }
+        }, 500);
+        
+        console.log('New song cued and will start playing');
+      } catch (err) {
+        console.error('Error changing song:', err);
+        setError('เกิดข้อผิดพลาดในการเปลี่ยนเพลง');
       }
+    } else {
+      console.log('Player not ready or not available');
     }
   };
 
@@ -403,62 +418,48 @@ const BackgroundMusic = () => {
       />
       
       {/* Main Music Player */}
-      <div className={`music-player ${isExpanded ? 'expanded' : ''}`}>
+      <div 
+        className={`music-player ${isExpanded ? 'expanded' : ''}`}
+        onClick={isMinimized ? toggleMinimized : undefined}
+        style={{ cursor: isMinimized ? 'pointer' : 'default' }}
+      >
         {/* Header with expand/collapse and minimize */}
         <div className="music-header" onClick={toggleExpanded}>
           <div className="music-icon">
             <span className="music-note">♪</span>
-            {isPlaying && <div className="music-waves">
+            {isPlaying && !isMinimized && <div className="music-waves">
               <span></span>
               <span></span>
               <span></span>
             </div>}
           </div>
-          <div className="header-controls">
-            <button 
-              className={`control-btn mute-btn ${isMuted ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleMute();
-              }}
-              title={isMuted ? "เปิดเสียง" : "ปิดเสียง"}
-            >
-              {isMuted ? '🔇' : '🔊'}
-            </button>
-            <button 
-              className={`control-btn autoplay-btn ${autoplayEnabled ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleAutoplay();
-              }}
-              title={autoplayEnabled ? "ปิด Autoplay" : "เปิด Autoplay"}
-            >
-              {autoplayEnabled ? '▶️' : '⏸️'}
-            </button>
-            <button 
-              className="control-btn playlist-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePlaylist();
-              }}
-              title="Playlist"
-            >
-              📋
-            </button>
-            <button 
-              className="control-btn minimize-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleMinimized();
-              }}
-              title={isMinimized ? "ขยาย" : "ย่อ"}
-            >
-              {isMinimized ? '🔽' : '🔼'}
-            </button>
-            <div className="expand-icon">
-              {isExpanded ? '−' : '+'}
+          {!isMinimized && (
+            <div className="header-controls">
+              <button 
+                className={`control-btn mute-btn ${isMuted ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleMute();
+                }}
+                title={isMuted ? "เปิดเสียง" : "ปิดเสียง"}
+              >
+                {isMuted ? '🔇' : '🔊'}
+              </button>
+              <button 
+                className="control-btn minimize-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleMinimized();
+                }}
+                title={isMinimized ? "ขยาย" : "ย่อ"}
+              >
+                {isMinimized ? '🔽' : '🔼'}
+              </button>
+              <div className="expand-icon">
+                {isExpanded ? '−' : '+'}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Thumbnail and Basic Info (always visible when not minimized) */}
@@ -585,57 +586,7 @@ const BackgroundMusic = () => {
           </div>
         )}
 
-        {/* Playlist */}
-        {showPlaylist && !isMinimized && (
-          <div className="playlist-panel">
-            <div className="playlist-header">
-              <span className="playlist-title">🎵 Playlist</span>
-              <button 
-                className="playlist-close"
-                onClick={togglePlaylist}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="playlist-songs">
-              {playlist.map((song, index) => (
-                <div 
-                  key={song.id}
-                  className={`playlist-song ${index === currentSongIndex ? 'current' : ''}`}
-                  onClick={() => changeSong(index)}
-                >
-                  <div className="playlist-thumbnail">
-                    <img 
-                      src={song.thumbnail} 
-                      alt={`${song.title} cover`}
-                      className="playlist-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        const fallback = e.target.nextSibling;
-                        if (fallback && fallback.classList.contains('playlist-fallback')) {
-                          fallback.classList.add('show');
-                        }
-                      }}
-                    />
-                    <div className="playlist-fallback">
-                      <span className="fallback-icon">♪</span>
-                    </div>
-                  </div>
-                  <div className="playlist-song-info">
-                    <div className="playlist-song-title">{song.title}</div>
-                    <div className="playlist-song-artist">{song.artist}</div>
-                  </div>
-                  {index === currentSongIndex && (
-                    <div className="current-indicator">
-                      <span className="playing-icon">♪</span>
-                      <span className="playing-text">กำลังเล่น</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Playlist section removed */}
       </div>
     </div>
   );
