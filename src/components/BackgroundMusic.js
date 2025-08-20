@@ -56,10 +56,40 @@ const BackgroundMusic = () => {
     },
     {
       id: '7vSdwtHm5q0',
-      title: 'LOVE NOT 24 HR.',
+      title: 'ฟ้าคงเหงาเมื่อไร้น้อต',
       artist: 'NOT',
       thumbnail: 'https://img.youtube.com/vi/7vSdwtHm5q0/maxresdefault.jpg'
-    }
+    },
+    {
+      id: 'LmJUzENql-w',
+      title: 'อยากไปKISSน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/LmJUzENql-w/maxresdefault.jpg'
+    },
+    {
+      id: 'MaeX5dV0njY',
+        title: 'เค้าจะใจดีกับน้อตเอง',
+        artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/MaeX5dV0njY/maxresdefault.jpg'
+    },
+    {
+      id: '1fKbgG0c3OI',
+      title: 'เป็นน้อตใช่อ๊ะเป่า',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/1fKbgG0c3OI/maxresdefault.jpg'
+    },
+    {
+      id: 'rWCULtx785s',
+      title: 'ให้เค้าดูแลน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/rWCULtx785s/maxresdefault.jpg'
+    },
+    {
+      id: 'hO0R0YTqnow',
+      title: 'น้อตคนโปรด',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/hO0R0YTqnow/maxresdefault.jpg'
+    },
   ];
 
   useEffect(() => {
