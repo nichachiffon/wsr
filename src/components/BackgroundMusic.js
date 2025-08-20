@@ -341,6 +341,22 @@ const BackgroundMusic = () => {
     }
   }, [player]);
 
+  // Auto-scroll playlist to current song when opened
+  useEffect(() => {
+    if (showPlaylist) {
+      // Small delay to ensure DOM is rendered
+      setTimeout(() => {
+        const activeItem = document.querySelector('.playlist-item.active');
+        if (activeItem) {
+          activeItem.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 100);
+    }
+  }, [showPlaylist, currentSongIndex]);
+
   const togglePlay = () => {
     if (!player || !isReady) {
       console.log('Player not ready yet');
