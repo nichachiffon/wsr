@@ -57,7 +57,7 @@ const BackgroundMusic = () => {
     },
     {
       id: '7vSdwtHm5q0',
-      title: 'ฟ้าคงเหงาเมื่อไร้น้อต',
+      title: 'LOVE NOT 24/7',
       artist: 'NOT',
       thumbnail: 'https://img.youtube.com/vi/7vSdwtHm5q0/maxresdefault.jpg'
     },
@@ -102,6 +102,54 @@ const BackgroundMusic = () => {
       title: 'ถ้าน้อตฟังอยู่',
       artist: 'NOT',
       thumbnail: 'https://img.youtube.com/vi/ziVAoQZ8CjA/maxresdefault.jpg'
+    },
+    {
+      id: 'SnNbi3i-SPU',
+      title: 'ฟ้าคงเหงาเมื่อไร้น้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/SnNbi3i-SPU/maxresdefault.jpg'
+    },
+    {
+      id: 'm6qgxvYcjGU',
+      title: 'น้อตคือชาไทยในยามเช้า',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/m6qgxvYcjGU/maxresdefault.jpg'
+    },
+    {
+      id: '5wunh46uVKY',
+      title: 'รู้งี้เป็นแฟนน้อตนานแล้ว',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/5wunh46uVKY/maxresdefault.jpg'
+    },
+    {
+      id: 'fgj8x925w0o',
+      title: 'ตั้งแต่มีน้อตเค้ามีความสุข',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/fgj8x925w0o/maxresdefault.jpg'
+    },
+    {
+      id: 'rCAJmH4BA5Y',
+      title: 'ฤดูของน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/rCAJmH4BA5Y/maxresdefault.jpg'
+    },
+    {
+      id: 'M7mK5Adi1z8',
+      title: 'แต่น้อตไม่เจ้าชู้',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/M7mK5Adi1z8/maxresdefault.jpg'
+    },
+    {
+      id: 'fF8YZaquWhg',
+      title: 'เมื่อได้พบน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/fF8YZaquWhg/maxresdefault.jpg'
+    },
+    {
+      id: 'CSZozBW7xMI',
+      title: 'หลงน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/CSZozBW7xMI/maxresdefault.jpg'
     }
   ];
 
