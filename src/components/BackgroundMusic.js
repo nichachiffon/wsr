@@ -16,6 +16,7 @@ const BackgroundMusic = () => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [showPlaylist, setShowPlaylist] = useState(false);
   
   const playerRef = useRef(null);
   const initializationRef = useRef(false);
@@ -90,6 +91,18 @@ const BackgroundMusic = () => {
       artist: 'NOT',
       thumbnail: 'https://img.youtube.com/vi/hO0R0YTqnow/maxresdefault.jpg'
     },
+    {
+      id: 'wYUWlWchJ6A',
+      title: 'ชอบหน้าหนาวที่มีน้อต',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/wYUWlWchJ6A/maxresdefault.jpg'
+    },
+    {
+      id: 'ziVAoQZ8CjA',
+      title: 'ถ้าน้อตฟังอยู่',
+      artist: 'NOT',
+      thumbnail: 'https://img.youtube.com/vi/ziVAoQZ8CjA/maxresdefault.jpg'
+    }
   ];
 
   useEffect(() => {
@@ -383,6 +396,19 @@ const BackgroundMusic = () => {
     player.seekTo(currentTime);
   };
 
+  const togglePlaylist = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setShowPlaylist(!showPlaylist);
+  };
+
+  const selectSongFromPlaylist = (index) => {
+    console.log('Selecting song from playlist:', index, playlist[index].title);
+    changeSong(index);
+    setShowPlaylist(false); // ปิด playlist หลังจากเลือกเพลง
+  };
+
   const changeSong = (index) => {
     console.log('changeSong called with index:', index, 'currentSongIndex:', currentSongIndex);
     if (index === currentSongIndex) {
@@ -465,6 +491,16 @@ const BackgroundMusic = () => {
           </div>
           {!isMinimized && (
             <div className="header-controls">
+              <button 
+                className={`control-btn playlist-btn ${showPlaylist ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  togglePlaylist();
+                }}
+                title="ดู Playlist"
+              >
+                📋
+              </button>
               <button 
                 className={`control-btn mute-btn ${isMuted ? 'active' : ''}`}
                 onClick={(e) => {
@@ -618,6 +654,54 @@ const BackgroundMusic = () => {
 
         {/* Playlist section removed */}
       </div>
+
+      {/* Playlist Section */}
+      {showPlaylist && !isMinimized && (
+        <div className="playlist-section">
+          <div className="playlist-header">
+            <h3>🎵  Playlist Love song  ⋆˚✿˖</h3>
+            <button 
+              className="close-playlist-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePlaylist();
+              }}
+              title="ปิด Playlist"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="playlist-content">
+            {playlist.map((song, index) => (
+              <div 
+                key={song.id}
+                className={`playlist-item ${index === currentSongIndex ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectSongFromPlaylist(index);
+                }}
+              >
+                <div className="playlist-thumbnail">
+                  <img 
+                    src={song.thumbnail} 
+                    alt={`${song.title} cover`}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="playlist-info">
+                  <div className="playlist-title">{song.title}</div>
+                  <div className="playlist-artist">{song.artist}</div>
+                </div>
+                <div className="playlist-status">
+                  {index === currentSongIndex ? '▶️ กำลังเล่น' : ''}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
